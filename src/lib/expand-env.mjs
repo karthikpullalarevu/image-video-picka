@@ -3,8 +3,10 @@ import {pref} from "./pref.js";
 
 // FIXME: https://github.com/arthurvr/image-extensions/issues/37
 imageExtensions.push("jpe", "jif", "jfi");
+const videoExtensions = ["mp4", "webm", "ogg", "mov", "avi", "mkv"];
+const mediaExtensions = [...imageExtensions, ...videoExtensions];
 
-const IMG_RE = new RegExp("^(.+)(\\.(?:" + imageExtensions.join("|") + "))\\b", "i");
+const MEDIA_RE = new RegExp("^(.+)(\\.(?:" + mediaExtensions.join("|") + "))\\b", "i");
 
 function createDateString(date) {
 	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())} ${pad(date.getMinutes())} ${pad(date.getSeconds())}`;
@@ -45,11 +47,11 @@ export function expandEnv(env, props) {
 		}
 	}
 	try {
-		[, name, ext] = base.match(IMG_RE);
-	} catch {
-		name = base;
-		ext = pref.get("defaultExt");
-	}
+  [, name, ext] = base.match(MEDIA_RE);
+  } catch {
+    name = base;
+    ext = pref.get("defaultExt") || "bin";
+  }
 	env.base = nestDecodeURIComponent(base);
 	env.name = nestDecodeURIComponent(name);
 	env.ext = nestDecodeURIComponent(ext);
